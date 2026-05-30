@@ -97,6 +97,25 @@ Accede a la consola con las credenciales.
 
 Los valores dependen de la configuración local del stack.
 
+## Respuestas
+1. Para los ids nulos ¿Qué sugieres hacer con ellos ?
+En general, cualquier valor nulo en un campo relevante debe documentarse como salida del proceso de Data Quality y reportarse al equipo de negocio dueño del dato. Ellos deben determinar si se trata de un error de integridad en la fuente, si el registro puede descartarse, si debe corregirse en origen o si es válido reemplazarlo con un valor por default.
+En el caso específico de id, no lo imputaría artificialmente, ya que puede representar una llave de trazabilidad o unicidad.
+
+2. Considerando las columnas name y company_id ¿Qué inconsistencias notas y como las mitigas?
+En name se observan valores que parecen ser errores o variantes corruptas de MiPasajefy. Para el ejercicio asumí que se validó con negocio y se confirmó el valor correcto, por lo que se corrigió en el código. Sin embargo, si esto fuera frecuente o existieran múltiples variantes reales, lo ideal sería manejarlo mediante una tabla de homologación o corregir la fuente origen.
+Para company_id, se identificaron valores nulos o inválidos y se normalizaron a un valor default identificable (unknown). Esta también debería ser una regla acordada con el dueño del dato. Dado que no es un campo relevante para las agregaciones solicitadas, se conserva el registro sin afectar el resultado final.
+
+3. Para el resto de los campos ¿Encuentras valores atípicos y de ser así cómo procedes?
+Sí. En campos relevantes para agregaciones o reportes finales, cualquier valor atípico debe revisarse y tener una regla acordada. En el ejercicio descarté registros con status inválido, simulando que existe un catálogo de estados permitidos, ya que generalmente así es. También traté montos inválidos, infinitos o fuera del rango esperado para una salida con valores nulos, para evitar que contaminen sumas, máximos o promedios.
+Además, generé logs informativos con la cantidad de registros o valores descartados y la causa.
+
+4. ¿Qué mejoras propondrías a tu proceso ETL para siguientes versiones?
+Agregaría una arquitectura por capas: conservar el archivo original en landing/raw, generar una capa silver con datos limpios y tipados, y publicar las agregaciones en una capa gold. Actualmente el proceso genera directamente el agregado, por lo que no hay tanta visibilidad sobre cómo quedaron los datos después de la limpieza.
+También agregaría un proceso formal de Data Quality. Por ejemplo, si name y created_at se usan como llaves de agregación, es necesario validar su integridad antes de transformar. Si vienen nulos o con valores incorrectos, deberían enviarse a una tabla de rechazos o reporte de calidad para corregir la fuente origen o definir nuevas reglas de tratamiento.
+En caso de un mayor volumen de datos considerar particionar por fecha o el criterio que se defina.
+Mejoras al diseño acorde al volumen, frecuencia de carga, criticidad del dato, trazabilidad y gobierno del dato.
+
 ## Autor
 
 Guadalupe Quintal V
