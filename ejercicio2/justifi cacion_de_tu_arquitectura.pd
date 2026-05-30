@@ -1,0 +1,90 @@
+# Ejercicio 2 — Arquitectura de datos
+
+## I. Arquitectura propuesta
+
+### A. Subconjunto de datos a extraer
+
+**Pregunta:** De cada fuente de datos se tienen identificados los campos que requiere el área operativa. ¿Para cumplir con los dos objetivos, qué subconjunto de cada fuente extraerías?
+
+**Respuesta:** La extracción se limitaría al subconjunto requerido por negocio, enriquecido únicamente con campos técnicos y analíticos indispensables para consolidación, trazabilidad y auditoría.
+
+### B. Retos de extracción por fuente
+
+**Pregunta:** ¿Qué posibles retos implica la extracción de cada una de las fuentes de datos por separado y qué herramientas utilizarías?
+
+**Respuesta:** Posible duplicidad, inconsistencias y, en general, calidad de datos diferente en cada fuente origen. Es necesario un buen proceso de validación/calidad para los datos relevantes de cada proceso de negocio, así como establecer reglas y automatizarlas para que se apliquen durante la extracción.
+
+### C. Independencia del modelo de datos
+
+**Pregunta:** ¿Qué posibles retos implica la independencia en el modelo de datos de las tres fuentes y cómo los resolverías?
+
+**Respuesta:**
+
+- **Llaves entre tablas:** Es necesario una tabla de homologación para identificar a quién pertenece cada registro de cada base de datos.
+- **Tipos de datos y nomenclaturas:** Unificar tipos, significados y convenciones mediante transformaciones cuando sea necesario.
+
+### D. Mitigación de impacto en fuentes originales
+
+**Pregunta:** ¿Aparte de un proceso batch en la hora de menor uso, cómo podrías mitigar el impacto del pipeline sobre las fuentes originales?
+
+**Respuesta:** Replicar a una base de datos de solo lectura o aplicar estrategias como CDC (Change Data Capture).
+
+### E. Etapas de transformación
+
+**Pregunta:** ¿Cuáles etapas considerarías en tu proceso de transformación de datos y qué uso les darías?
+
+**Respuesta:**
+
+| Capa | Propósito |
+|---|---|
+| **Raw** | Datos crudos sin modificar, como llegan de la fuente |
+| **Bronze** | Datos parseados con schema aplicado |
+| **Silver** | Limpieza, deduplicación y modelo canónico |
+| **Gold** | Agregaciones listas para consumo operativo (SQL) |
+| **DataSet** | Subconjuntos específicos para ciencia de datos |
+
+### F. Herramientas de transformación
+
+**Pregunta:** ¿Qué herramientas utilizarías para las etapas de transformación?
+
+**Respuesta:** Databricks, Python (PySpark / Polars / Pandas).
+
+### G. Storage por propósito
+
+**Pregunta:** ¿Qué storage usarías para cada propósito y por qué?
+
+**Respuesta:** Data lake storage para almacenamiento general y un data warehouse para consultas SQL.
+
+### H. Orquestación del pipeline
+
+**Pregunta:** Al menos a diario habrá que llevar data nueva a la etapa de transformación final. ¿Cómo orquestarías el pipeline y con qué herramienta?
+
+**Respuesta:** Con Airflow o Data Factory, programado en los horarios acordados.
+
+### I. Diagrama de arquitectura
+
+**Pregunta:** Proporciona un diagrama de tu propuesta de arquitectura.
+
+**Respuesta:** Se adjunta el diagrama en [`Arquitectura.svg`](./Arquitectura.svg).
+
+![Diagrama de arquitectura](./Arquitectura.svg)
+
+---
+
+## II. Seguridad
+
+### A. Seguridad end-to-end
+
+**Pregunta:** ¿Cómo mantendrías la seguridad del flujo de datos end-to-end? Es decir, disminuir riesgos de posibles fugas o intrusiones no deseadas al entorno de ejecución.
+
+**Respuesta:** Principio de mínimo privilegio, no exponer claves ni secretos, identificar en el diseño los datos que no deberían estar en claro, utilizar herramientas que permitan permisos a nivel columna o fila, cifrado en tránsito y en reposo, y asegurar una correcta trazabilidad.
+
+---
+
+## III. Gobernanza de datos
+
+### A. Control de metadata y procesos
+
+**Pregunta:** ¿Cómo llevarías control de la metadata y sus cambios, al igual que los procesos del pipeline, y cómo almacenarías estos datos?
+
+**Respuesta:** Proceso de Data Quality, algún sistema de gobernanza como Unity Catalog en Databricks, y en el acceso a SQL solo usuarios autorizados.
