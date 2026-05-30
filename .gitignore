@@ -216,3 +216,12 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+ejercicio1/Airflow/config/*
+!ejercicio1/Airflow/config/.gitkeep
+
+ejercicio1/Airflow/logs/*
+!ejercicio1/Airflow/logs/.gitkeep
+
+ejercicio1/Minio/data/
+!ejercicio1/Minio/.gitkeep
