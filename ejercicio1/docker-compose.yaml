@@ -73,6 +73,11 @@ x-airflow-common:
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:- polars trino}
     # The following line can be used to set a custom config file, stored in the local config folder
     AIRFLOW_CONFIG: '/opt/airflow/config/airflow.cfg'
+
+    BUCKET_LANDING: ${BUCKET_LANDING}
+    BUCKET_BRONZE: ${BUCKET_BRONZE}
+    TRINO_CATALOG: ${TRINO_CATALOG}
+
   volumes:
     - ./Airflow/dags:/opt/airflow/dags
     - ./Airflow/logs:/opt/airflow/logs
